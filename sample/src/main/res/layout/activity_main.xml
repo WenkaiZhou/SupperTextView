@@ -1,14 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.kevin.suppertextview.sample.MainActivity">
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Hello World!" app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center">
 
-</android.support.constraint.ConstraintLayout>
+        <com.kevin.suppertextview.SupperTextView
+            android:id="@+id/bt_font_size_small"
+            style="@style/custom_button_font_setting_style"
+            android:text="@string/font_small"
+            app:textLeftBottomRadius="5dp"
+            app:textLeftTopRadius="5dp"
+            app:textNoRightStroke="true" />
+
+        <com.kevin.suppertextview.SupperTextView
+            android:id="@+id/bt_font_size_normal"
+            style="@style/custom_button_font_setting_style"
+            android:text="@string/font_normal" />
+
+        <com.kevin.suppertextview.SupperTextView
+            android:id="@+id/bt_font_size_big"
+            style="@style/custom_button_font_setting_style"
+            android:text="@string/font_big"
+            app:textNoLeftStroke="true" />
+
+        <com.kevin.suppertextview.SupperTextView
+            android:id="@+id/bt_font_size_large"
+            style="@style/custom_button_font_setting_style"
+            android:text="@string/font_large"
+            app:textNoLeftStroke="true"
+            app:textRightBottomRadius="5dp"
+            app:textRightTopRadius="5dp" />
+
+    </LinearLayout>
+
+
+    <com.kevin.suppertextview.SupperTextView
+        android:id="@+id/tv_1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="圆角TextView"
+        android:textColor="@color/color_ffffff"
+        android:textSize="16sp"
+        app:textNormalSolidColor="@color/color_303f9f"
+        app:textRadius="@dimen/radius_10" />
+
+    <com.kevin.suppertextview.SupperTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="左上左下圆角TextView!"
+        android:textColor="@color/color_ffffff"
+        android:textSize="16sp"
+        app:textLeftBottomRadius="@dimen/radius_10"
+        app:textLeftTopRadius="@dimen/radius_10"
+        app:textNormalSolidColor="@color/color_303f9f" />
+
+    <com.kevin.suppertextview.SupperTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="圆角TextView"
+        android:textColor="@color/color_ffffff"
+        android:textSize="16sp"
+        app:textNormalSolidColor="@color/color_303f9f"
+        app:textRadius="@dimen/radius_10"
+        app:textStrokeColor="@color/color_ff4081"
+        app:textStrokeWidth="2dp" />
+
+    <com.kevin.suppertextview.SupperTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="45弧度按下改变文字颜色TextView"
+        android:textSize="16sp"
+        app:textNormalSolidColor="@color/color_303f9f"
+        app:textNormalTextColor="@color/color_ff0000"
+        app:textRadius="@dimen/radius_45"
+        app:textSelectedTextColor="@color/color_00ff00"
+        app:textStrokeWidth="2dp" />
+
+    <com.kevin.suppertextview.SupperTextView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="左上左下圆角TextView!"
+        android:textColor="@color/color_ffffff"
+        android:textSize="16sp"
+        app:textDrawable="@mipmap/ic_launcher"
+        app:textNormalSolidColor="@color/color_303f9f"
+        app:textRadius="@dimen/radius_45" />
+
+    <com.kevin.suppertextview.SupperTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="45弧度按下改变背景颜色TextView"
+        android:textSize="16sp"
+        app:textNormalSolidColor="@color/color_303f9f"
+        app:textPressedSolidColor="@color/color_898989"
+        app:textNormalTextColor="@color/color_ff0000"
+        app:textRadius="@dimen/radius_45"
+        app:textSelectedTextColor="@color/color_00ff00"
+        app:textStrokeWidth="2dp" />
+
+    <com.kevin.suppertextview.SupperTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:enabled="false"
+        android:text="45弧度enabled=false TextView"
+        android:textSize="16sp"
+        app:textNormalSolidColor="@color/color_303f9f"
+        app:textPressedSolidColor="@color/color_898989"
+        app:textNormalTextColor="@color/color_ff0000"
+        app:textDisabledSolidColor="@color/color_464646"
+        app:textRadius="@dimen/radius_45"
+        app:textSelectedTextColor="@color/color_00ff00"
+        app:textStrokeWidth="2dp" />
+
+</LinearLayout>
