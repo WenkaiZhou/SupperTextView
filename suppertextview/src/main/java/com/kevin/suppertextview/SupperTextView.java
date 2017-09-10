@@ -1,5 +1,6 @@
 package com.kevin.suppertextview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -9,6 +10,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
+import android.support.annotation.ColorInt;
+import android.support.annotation.DrawableRes;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ImageSpan;
@@ -19,6 +22,7 @@ import android.widget.TextView;
  * Created by zhouwenkai on 2017/9/3.
  */
 
+@SuppressLint("AppCompatCustomView")
 public class SupperTextView extends TextView {
 
     private GradientDrawable normalGD;
@@ -26,12 +30,32 @@ public class SupperTextView extends TextView {
     private GradientDrawable disabledGD;
     private StateListDrawable selector;
 
-    private int strokeWidth;
-    private int radius;
+    private int mStrokeWidth;
+    private int mStrokeColor;
+
+    private int mRadius;
+    private int leftTopRadius;
+    private int leftBottomRadius;
+    private int rightTopRadius;
+    private int rightBottomRadius;
+
+    private int normalTextColor;
+    private int selectedTextColor;
+
+    private int normalSolidColor;
+    private int pressedSolidColor;
+    private int disabledSolidColor;
+
+    private boolean noLeftStroke;
+    private boolean noRightStroke;
+    private boolean noTopStroke;
+    private boolean noBottomStroke;
+
+
+    private boolean mIsSelected;
 
     public SupperTextView(Context context) {
         super(context);
-
     }
 
     public SupperTextView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -48,81 +72,54 @@ public class SupperTextView extends TextView {
     private void setAttributeSet(Context context, AttributeSet attrs) {
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SupperTextView);
-        int strokeColor = a.getColor(R.styleable.SupperTextView_textStrokeColor, Color.TRANSPARENT);
-        radius = a.getDimensionPixelSize(R.styleable.SupperTextView_textRadius, 0);
-        int leftTopRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textLeftTopRadius, 0);
-        int leftBottomRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textLeftBottomRadius, 0);
-        int rightTopRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textRightTopRadius, 0);
-        int rightBottomRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textRightBottomRadius, 0);
-        strokeWidth = a.getDimensionPixelSize(R.styleable.SupperTextView_textStrokeWidth, 0);
-        int normalTextColor = a.getColor(R.styleable.SupperTextView_textNormalTextColor, Color.TRANSPARENT);
-        int selectedTextColor = a.getColor(R.styleable.SupperTextView_textSelectedTextColor, Color.TRANSPARENT);
-        int normalSolidColor = a.getColor(R.styleable.SupperTextView_textNormalSolidColor, Color.TRANSPARENT);
-        int pressedSolidColor = a.getColor(R.styleable.SupperTextView_textPressedSolidColor, Color.TRANSPARENT);
-        int disabledSolidColor = a.getColor(R.styleable.SupperTextView_textDisabledSolidColor, Color.TRANSPARENT);
-        boolean isSelected = a.getBoolean(R.styleable.SupperTextView_textIsSelected, false);
-        boolean noLeftStroke = a.getBoolean(R.styleable.SupperTextView_textNoLeftStroke, false);
-        boolean noRightStroke = a.getBoolean(R.styleable.SupperTextView_textNoRightStroke, false);
-        boolean noTopStroke = a.getBoolean(R.styleable.SupperTextView_textNoTopStroke, false);
-        boolean noBottomStroke = a.getBoolean(R.styleable.SupperTextView_textNoBottomStroke, false);
-        Drawable textDrawable = a.getDrawable(R.styleable.SupperTextView_textDrawable);
+        mStrokeColor = a.getColor(R.styleable.SupperTextView_textStrokeColor, Color.TRANSPARENT);
+        mRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textRadius, 0);
+        leftTopRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textLeftTopRadius, 0);
+        leftBottomRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textLeftBottomRadius, 0);
+        rightTopRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textRightTopRadius, 0);
+        rightBottomRadius = a.getDimensionPixelSize(R.styleable.SupperTextView_textRightBottomRadius, 0);
+        mStrokeWidth = a.getDimensionPixelSize(R.styleable.SupperTextView_textStrokeWidth, 0);
+        normalTextColor = a.getColor(R.styleable.SupperTextView_textNormalTextColor, Color.TRANSPARENT);
+        selectedTextColor = a.getColor(R.styleable.SupperTextView_textSelectedTextColor, Color.TRANSPARENT);
+        normalSolidColor = a.getColor(R.styleable.SupperTextView_textNormalSolidColor, Color.TRANSPARENT);
+        pressedSolidColor = a.getColor(R.styleable.SupperTextView_textPressedSolidColor, Color.TRANSPARENT);
+        disabledSolidColor = a.getColor(R.styleable.SupperTextView_textDisabledSolidColor, Color.TRANSPARENT);
+        mIsSelected = a.getBoolean(R.styleable.SupperTextView_textIsSelected, false);
+        noLeftStroke = a.getBoolean(R.styleable.SupperTextView_textNoLeftStroke, false);
+        noRightStroke = a.getBoolean(R.styleable.SupperTextView_textNoRightStroke, false);
+        noTopStroke = a.getBoolean(R.styleable.SupperTextView_textNoTopStroke, false);
+        noBottomStroke = a.getBoolean(R.styleable.SupperTextView_textNoBottomStroke, false);
+        BitmapDrawable textDrawable = (BitmapDrawable) a.getDrawable(R.styleable.SupperTextView_textDrawable);
 
         a.recycle();
 
+        setStateListDrawable();
+
+        setTextDrawable(textDrawable);
+
+        setTextColor(normalTextColor, selectedTextColor);
+    }
+
+    private void setStateListDrawable() {
         selector = new StateListDrawable();
         normalGD = new GradientDrawable();
         pressedGD = new GradientDrawable();
         disabledGD = new GradientDrawable();
 
         // set selected state
-        setPressedState(leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius, strokeColor,
-                pressedSolidColor, noLeftStroke, noRightStroke, noTopStroke, noBottomStroke, isSelected);
+        setPressedState(leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius, mStrokeColor,
+                pressedSolidColor, noLeftStroke, noRightStroke, noTopStroke, noBottomStroke, mIsSelected);
 
         // set disabled state
-        setDisabledState(leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius, strokeColor,
+        setDisabledState(leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius, mStrokeColor,
                 disabledSolidColor, noLeftStroke, noRightStroke, noTopStroke, noBottomStroke);
 
         // set normal state
-        setNormalState(leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius, strokeColor,
+        setNormalState(leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius, mStrokeColor,
                 normalSolidColor, noLeftStroke, noRightStroke, noTopStroke, noBottomStroke);
 
         // set selector
         setBackgroundDrawable(selector);
-
-        if (textDrawable != null) {
-            BitmapDrawable bd = (BitmapDrawable) textDrawable;
-            ImageSpan imageSpan = new ImageSpan(getContext(), bd.getBitmap());
-
-            String text = "[icon]";
-            SpannableString ss = new SpannableString("[icon]");
-
-            ss.setSpan(imageSpan, 0, text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            setText(ss);
-        }
-
-
-        if (normalTextColor != 0 && selectedTextColor != 0) {
-            //设置state_selected状态时，和正常状态时文字的颜色
-            setClickable(true);
-            ColorStateList textColorSelect = null;
-
-            if (isSelected) { //是否可以选中
-                int[][] states = new int[2][1];
-                states[0] = new int[]{android.R.attr.state_selected};
-                states[1] = new int[]{};
-                textColorSelect = new ColorStateList(states, new int[]{selectedTextColor, normalTextColor});
-            } else {
-                int[][] states = new int[3][1];
-                states[0] = new int[]{android.R.attr.state_selected};
-                states[1] = new int[]{android.R.attr.state_pressed};
-                states[2] = new int[]{};
-                textColorSelect = new ColorStateList(states, new int[]{selectedTextColor, selectedTextColor, normalTextColor});
-            }
-
-            setTextColor(textColorSelect);
-        } else {
-            setClickable(false);
-        }
     }
 
     /**
@@ -146,7 +143,7 @@ public class SupperTextView extends TextView {
         //设置正常状态下填充色
         normalGD.setColor(normalSolid);
         //设置描边
-        normalGD.setStroke(strokeWidth, strokeColor);
+        normalGD.setStroke(mStrokeWidth, strokeColor);
         //设置圆角
         setRadius(normalGD, leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius);
         //normal drawable
@@ -172,14 +169,14 @@ public class SupperTextView extends TextView {
      * @param noBottomStroke    无底描边
      */
     private void setDisabledState(int leftTopRadius, int leftBottomRadius, int rightBottomRadius, int rightTopRadius,
-                                 int strokeColor, int disabledSolid, boolean noLeftStroke,
-                                 boolean noRightStroke, boolean noTopStroke, boolean noBottomStroke) {
+                                  int strokeColor, int disabledSolid, boolean noLeftStroke,
+                                  boolean noRightStroke, boolean noTopStroke, boolean noBottomStroke) {
 
         if (disabledSolid != Color.TRANSPARENT) {
             //设置Disable状态下填充色
             disabledGD.setColor(disabledSolid);
             //设置描边
-            disabledGD.setStroke(strokeWidth, strokeColor);
+            disabledGD.setStroke(mStrokeWidth, strokeColor);
             //设置圆角
             setRadius(disabledGD, leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius);
             //normal drawable
@@ -214,7 +211,7 @@ public class SupperTextView extends TextView {
             //设置按下填充色
             pressedGD.setColor(pressedSolid);
             //设置选中状态下描边边距
-            pressedGD.setStroke(strokeWidth, strokeColor);
+            pressedGD.setStroke(mStrokeWidth, strokeColor);
             //设置圆角
             setRadius(pressedGD, leftTopRadius, leftBottomRadius, rightBottomRadius, rightTopRadius);
 
@@ -240,8 +237,8 @@ public class SupperTextView extends TextView {
      */
     private void setRadius(GradientDrawable drawable, int leftTopRadius, int leftBottomRadius,
                            int rightBottomRadius, int rightTopRadius) {
-        if (radius != 0) {
-            drawable.setCornerRadius(radius);
+        if (mRadius != 0) {
+            drawable.setCornerRadius(mRadius);
         } else if (leftTopRadius != 0 || leftBottomRadius != 0 || rightTopRadius != 0 || rightBottomRadius != 0) {
             drawable.setCornerRadii(new float[]{leftTopRadius, leftTopRadius, rightTopRadius,
                     rightTopRadius, rightBottomRadius, rightBottomRadius, leftBottomRadius, leftBottomRadius});
@@ -261,10 +258,10 @@ public class SupperTextView extends TextView {
      */
     private void setStrokeMargin(LayerDrawable layerDrawable, int index, boolean left, boolean right, boolean top, boolean bottom) {
 
-        int leftMargin = left ? -strokeWidth : 0;
-        int rightMargin = right ? -strokeWidth : 0;
-        int topMargin = top ? -strokeWidth : 0;
-        int bottomMargin = bottom ? -strokeWidth : 0;
+        int leftMargin = left ? -mStrokeWidth : 0;
+        int rightMargin = right ? -mStrokeWidth : 0;
+        int topMargin = top ? -mStrokeWidth : 0;
+        int bottomMargin = bottom ? -mStrokeWidth : 0;
 
         layerDrawable.setLayerInset(index, leftMargin, topMargin, rightMargin, bottomMargin);
     }
@@ -272,13 +269,21 @@ public class SupperTextView extends TextView {
     /**
      * 设置填充图片
      *
-     * @param drawableId normalGD id
+     * @param drawableId
      */
-    public void setTextDrawable(int drawableId) {
+    public void setTextDrawable(@DrawableRes int drawableId) {
         if (drawableId != 0) {
-            Drawable textdrwable = getResources().getDrawable(drawableId);
-            BitmapDrawable bd = (BitmapDrawable) textdrwable;
-            ImageSpan imageSpan = new ImageSpan(getContext(), bd.getBitmap());
+            Drawable drawable = getResources().getDrawable(drawableId);
+            setTextDrawable((BitmapDrawable) drawable);
+        }
+    }
+
+    /**
+     * @param drawable
+     */
+    public void setTextDrawable(BitmapDrawable drawable) {
+        if (drawable != null) {
+            ImageSpan imageSpan = new ImageSpan(getContext(), drawable.getBitmap());
 
             String text = "[icon]";
             SpannableString ss = new SpannableString("[icon]");
@@ -291,56 +296,49 @@ public class SupperTextView extends TextView {
     /**
      * 设置填充颜色
      *
-     * @param colorId 颜色id
+     * @param color 颜色id
      */
-    public void setSolidColor(int colorId) {
-        normalGD.setColor(colorId);
-        setBackgroundDrawable(normalGD);
+    public void setNormalSolidColor(@ColorInt int color) {
+        normalSolidColor = color;
+        setStateListDrawable();
     }
 
     /**
-     * 设置圆角弧度
+     * 设置边框颜色
      *
-     * @param leftTopRadius     左上角弧度
-     * @param leftBottomRadius  左下角弧度
-     * @param rightTopRadius    右上角弧度
-     * @param rightBottomRadius 右下角弧度
+     * @param color
      */
-    public void setRadius(int leftTopRadius, int leftBottomRadius, int rightTopRadius, int rightBottomRadius) {
-        normalGD.setCornerRadii(new float[]{leftTopRadius, leftTopRadius, rightTopRadius, rightTopRadius, rightBottomRadius, rightBottomRadius, leftBottomRadius, leftBottomRadius});
-        setBackgroundDrawable(normalGD);
+    public void setStrokeColor(@ColorInt int color) {
+        this.mStrokeColor = color;
+        setStateListDrawable();
     }
 
     /**
-     * 设置边框颜色及宽度
-     *
-     * @param strokeWidth 边框宽度
-     * @param colorId     边框颜色 id
-     */
-    public void setStrokeColorAndWidth(int strokeWidth, int colorId) {
-        normalGD.setStroke(strokeWidth, getResources().getColor(colorId));
-    }
-
-
-    /**
-     * 设置textView选中状态颜色
+     * 设置textView状态颜色
      *
      * @param normalTextColor   正常状态颜色
      * @param selectedTextColor 按下状态颜色
      */
-    public void setSelectedTextColor(int normalTextColor, int selectedTextColor) {
-
-        normalTextColor = getResources().getColor(normalTextColor);
-        selectedTextColor = getResources().getColor(selectedTextColor);
+    public void setTextColor(int normalTextColor, int selectedTextColor) {
 
         if (normalTextColor != 0 && selectedTextColor != 0) {
             //设置state_selected状态时，和正常状态时文字的颜色
             setClickable(true);
-            int[][] states = new int[3][1];
-            states[0] = new int[]{android.R.attr.state_selected};
-            states[1] = new int[]{android.R.attr.state_pressed};
-            states[2] = new int[]{};
-            ColorStateList textColorSelect = new ColorStateList(states, new int[]{selectedTextColor, selectedTextColor, normalTextColor});
+            ColorStateList textColorSelect = null;
+
+            if (mIsSelected) { //是否可以选中
+                int[][] states = new int[2][1];
+                states[0] = new int[]{android.R.attr.state_selected};
+                states[1] = new int[]{};
+                textColorSelect = new ColorStateList(states, new int[]{selectedTextColor, normalTextColor});
+            } else {
+                int[][] states = new int[3][1];
+                states[0] = new int[]{android.R.attr.state_selected};
+                states[1] = new int[]{android.R.attr.state_pressed};
+                states[2] = new int[]{};
+                textColorSelect = new ColorStateList(states, new int[]{selectedTextColor, selectedTextColor, normalTextColor});
+            }
+
             setTextColor(textColorSelect);
         } else {
             setClickable(false);
