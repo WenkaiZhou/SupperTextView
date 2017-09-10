@@ -69,6 +69,7 @@
         app:textNormalSolidColor="@color/color_303f9f" />
 
     <com.kevin.suppertextview.SupperTextView
+        android:id="@+id/tv_7"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
@@ -115,8 +116,8 @@
         android:text="45弧度按下改变背景颜色TextView"
         android:textSize="16sp"
         app:textNormalSolidColor="@color/color_303f9f"
-        app:textPressedSolidColor="@color/color_898989"
         app:textNormalTextColor="@color/color_ff0000"
+        app:textPressedSolidColor="@color/color_898989"
         app:textRadius="@dimen/radius_45"
         app:textSelectedTextColor="@color/color_00ff00"
         app:textStrokeWidth="2dp" />
@@ -125,16 +126,26 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
-        android:gravity="center"
         android:enabled="false"
+        android:gravity="center"
         android:text="45弧度enabled=false TextView"
         android:textSize="16sp"
-        app:textNormalSolidColor="@color/color_303f9f"
-        app:textPressedSolidColor="@color/color_898989"
-        app:textNormalTextColor="@color/color_ff0000"
         app:textDisabledSolidColor="@color/color_464646"
+        app:textNormalSolidColor="@color/color_303f9f"
+        app:textNormalTextColor="@color/color_ff0000"
+        app:textPressedSolidColor="@color/color_898989"
         app:textRadius="@dimen/radius_45"
         app:textSelectedTextColor="@color/color_00ff00"
         app:textStrokeWidth="2dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/color_303f9f"
+        android:gravity="center"
+        android:onClick="click"
+        android:text="点击"
+        android:textColor="@color/color_ffffff" />
 
 </LinearLayout>
