@@ -6,7 +6,7 @@ TextView 实现填充色、圆角、文字变色、边框、边框颜色、背�
 如果您的项目使用 Gradle 构建, 只需要在您的build.gradle文件添加下面一行到 dependencies :
 
 ```
-compile 'com.kevin:suppertextview:0.1.1'
+compile 'com.kevin:suppertextview:0.1.3'
 ```
 
 ## 效果
