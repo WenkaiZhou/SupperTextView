@@ -98,6 +98,8 @@ public class SupperTextView extends TextView {
         setTextDrawable(textDrawable);
 
         setTextColor(normalTextColor, selectedTextColor);
+
+        setClickable(true);
     }
 
     private void setStateListDrawable() {
@@ -323,8 +325,7 @@ public class SupperTextView extends TextView {
 
         if (normalTextColor != 0 && selectedTextColor != 0) {
             //设置state_selected状态时，和正常状态时文字的颜色
-            setClickable(true);
-            ColorStateList textColorSelect = null;
+            ColorStateList textColorSelect;
 
             if (mIsSelected) { //是否可以选中
                 int[][] states = new int[2][1];
@@ -340,8 +341,6 @@ public class SupperTextView extends TextView {
             }
 
             setTextColor(textColorSelect);
-        } else {
-            setClickable(false);
         }
 
     }
